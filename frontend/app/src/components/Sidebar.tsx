@@ -6,7 +6,7 @@ const navItems = [
   { icon: "mic", label: "AI Voice", path: "/ai-voice" },
   { icon: "calendar_month", label: "Schedule", path: "/schedule" },
   { icon: "payments", label: "Finance", path: "/finance" },
-  { icon: "clinical_notes", label: "Medical Record", path: "/medical-record" },
+  { icon: "clinical_notes", label: "Hub", path: "/medical-record" },
   { icon: "chat", label: "Chat", path: "/chat" },
   { icon: "person", label: "Doctor Profile", path: "/doctor-profile" },
   { icon: "settings", label: "Settings", path: "/settings" },

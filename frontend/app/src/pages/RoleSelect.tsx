@@ -14,10 +14,10 @@ const RoleSelect = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4">
       <div className="max-w-4xl w-full">
         <h1 className="text-4xl md:text-5xl font-heading font-bold text-center mb-3">
-          Welcome to Synapsa.ai
+          Bem-vindo a Synapsa
         </h1>
         <p className="text-muted-foreground text-center mb-12 text-lg">
-          Choose how you'd like to continue
+          Escolha como você quer continuar
         </p>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -26,12 +26,12 @@ const RoleSelect = () => {
               <span className="material-symbols-rounded text-6xl text-primary mb-4 block">
                 person
               </span>
-              <h2 className="text-2xl font-heading font-semibold mb-3">I'm a Patient</h2>
+              <h2 className="text-2xl font-heading font-semibold mb-3">Sou Paciente</h2>
               <p className="text-muted-foreground mb-6">
-                Monitor your emotional well-being with AI-powered voice analysis
+                Monitore suas emoções well-being with AI-powered voice analysis
               </p>
               <Button className="w-full" size="lg">
-                Continue as Patient
+                Continue como paciente
               </Button>
             </div>
           </Card>
@@ -46,7 +46,7 @@ const RoleSelect = () => {
                 Access clinical tools and AI insights for patient care
               </p>
               <Button variant="secondary" className="w-full" size="lg">
-                Continue as Doctor
+                Continue como profissional
               </Button>
             </div>
           </Card>
