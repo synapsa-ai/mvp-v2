@@ -1,5 +1,10 @@
 # Backend
 
+**Run in terminal:**
+
+uvicorn pipe.server.agent_server:app --port 8000 --reload
+
+
 | App                | Responsável (resumo direto)                                                            |
 | ------------------ | -------------------------------------------------------------------------------------- |
 | **core**           | Configuração central do projeto (settings, URLs raiz, ASGI/WSGI, integrações globais). |

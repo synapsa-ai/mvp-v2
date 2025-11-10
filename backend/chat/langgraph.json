@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "env": ".env",
+  "graphs": {
+    "sin":  "pipe/agent/sin/sin.py:sin_agent",
+    "lyra": "pipe/agent/lyra/lyra.py:lyra_agent"
+  }
+}

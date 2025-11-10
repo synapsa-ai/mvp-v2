@@ -1,0 +1,31 @@
+# -------------------------------
+# Arquivos sensíveis / ambiente
+# -------------------------------
+.env
+*.env
+
+# -------------------------------
+# Python cache / compilados
+# -------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# -------------------------------
+# Dados grandes que não devem ir pro repo
+# -------------------------------
+realeases/
+data/
+models/
+
+# Logs
+*.log
+
+# -------------------------------
+# IDE / sistema
+# -------------------------------
+.vscode/
+.idea/
+.DS_Storemodels/clinical_ner_model/
+models/clinical_ner_model/
