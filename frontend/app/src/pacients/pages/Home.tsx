@@ -30,8 +30,8 @@ const Home = () => {
       <div className="p-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-heading font-bold mb-2">Welcome back! 👋</h1>
-            <p className="text-muted-foreground">How are you feeling today?</p>
+            <h1 className="text-3xl font-heading font-bold mb-2">Bem-vindo, Felipe</h1>
+            <p className="text-muted-foreground">Como você está se sentindo hoje?</p>
           </div>
           <ThemeToggle />
         </div>
@@ -40,11 +40,11 @@ const Home = () => {
           <Card className="p-6 shadow-card hover:shadow-elevated transition-smooth cursor-pointer" onClick={() => navigate("/ai-voice")}>
             <div className="flex items-start justify-between mb-4">
               <span className="material-symbols-rounded text-3xl text-primary">psychology</span>
-              <span className="text-xs text-muted-foreground">2 days ago</span>
+              <span className="text-xs text-muted-foreground">2 dias atrás</span>
             </div>
-            <h3 className="font-heading font-semibold mb-2">Last AI Analysis</h3>
+            <h3 className="font-heading font-semibold mb-2">Última análise de voz</h3>
             <p className="text-sm text-muted-foreground mb-3">Moderate stress detected</p>
-            <p className="text-xs text-primary">View details →</p>
+            <p className="text-xs text-primary">Ver detalhes →</p>
           </Card>
 
           <Card className="p-6 shadow-card hover:shadow-elevated transition-smooth cursor-pointer" onClick={() => navigate("/schedule")}>
@@ -54,7 +54,7 @@ const Home = () => {
             </div>
             <h3 className="font-heading font-semibold mb-2">Next Appointment</h3>
             <p className="text-sm text-muted-foreground mb-3">Dr. João Silva - 3:00 PM</p>
-            <p className="text-xs text-secondary">View schedule →</p>
+            <p className="text-xs text-secondary">Ver agendamentos →</p>
           </Card>
 
           <Card className="p-6 shadow-card gradient-primary">

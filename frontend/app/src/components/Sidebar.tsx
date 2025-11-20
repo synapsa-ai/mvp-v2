@@ -3,13 +3,13 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { icon: "home", label: "Home", path: "/home" },
-  { icon: "mic", label: "AI Voice", path: "/ai-voice" },
-  { icon: "calendar_month", label: "Schedule", path: "/schedule" },
-  { icon: "payments", label: "Finance", path: "/finance" },
-  { icon: "clinical_notes", label: "Hub", path: "/medical-record" },
+  { icon: "mic", label: "Análise de voz", path: "/ai-voice" },
+  { icon: "calendar_month", label: "Agendamentos", path: "/schedule" },
+  //{ icon: "payments", label: "Finance", path: "/finance" },
+  //{ icon: "clinical_notes", label: "Hub", path: "/medical-record" },
   { icon: "chat", label: "Chat", path: "/chat" },
-  { icon: "person", label: "Doctor Profile", path: "/doctor-profile" },
-  { icon: "settings", label: "Settings", path: "/settings" },
+  { icon: "person", label: "Perfil", path: "/doctor-profile" },
+  { icon: "settings", label: "Configurações", path: "/settings" },
 ];
 
 const Sidebar = () => {

@@ -7,7 +7,12 @@ const RoleSelect = () => {
 
   const selectRole = (role: "patient" | "doctor") => {
     localStorage.setItem("userRole", role);
-    navigate("/home");
+
+    if (role === "patient") {
+      navigate("/home");          // fluxo paciente
+    } else {
+      navigate("/professional");  // fluxo profissional (CRM)
+    }
   };
 
   return (
@@ -21,14 +26,19 @@ const RoleSelect = () => {
         </p>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <Card className="p-8 shadow-elevated hover:scale-105 transition-smooth cursor-pointer" onClick={() => selectRole("patient")}>
+          <Card
+            className="p-8 shadow-elevated hover:scale-105 transition-smooth cursor-pointer"
+            onClick={() => selectRole("patient")}
+          >
             <div className="text-center">
               <span className="material-symbols-rounded text-6xl text-primary mb-4 block">
                 person
               </span>
-              <h2 className="text-2xl font-heading font-semibold mb-3">Sou Paciente</h2>
+              <h2 className="text-2xl font-heading font-semibold mb-3">
+                Paciente
+              </h2>
               <p className="text-muted-foreground mb-6">
-                Monitore suas emoções well-being with AI-powered voice analysis
+                Cuide das suas emoções e bem-estar com análise de voz assistida por IA
               </p>
               <Button className="w-full" size="lg">
                 Continue como paciente
@@ -36,14 +46,19 @@ const RoleSelect = () => {
             </div>
           </Card>
 
-          <Card className="p-8 shadow-elevated hover:scale-105 transition-smooth cursor-pointer" onClick={() => selectRole("doctor")}>
+          <Card
+            className="p-8 shadow-elevated hover:scale-105 transition-smooth cursor-pointer"
+            onClick={() => selectRole("doctor")}
+          >
             <div className="text-center">
               <span className="material-symbols-rounded text-6xl text-secondary mb-4 block">
                 medical_services
               </span>
-              <h2 className="text-2xl font-heading font-semibold mb-3">I'm a Doctor</h2>
+              <h2 className="text-2xl font-heading font-semibold mb-3">
+                Profissional
+              </h2>
               <p className="text-muted-foreground mb-6">
-                Access clinical tools and AI insights for patient care
+                Acesse ferramentas clínicas e insights de IA para o cuidado do paciente
               </p>
               <Button variant="secondary" className="w-full" size="lg">
                 Continue como profissional
