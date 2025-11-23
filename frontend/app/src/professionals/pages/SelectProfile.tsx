@@ -54,7 +54,7 @@ export const SelectProfile = ({ onComplete }: SelectProfileProps) => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary">✓</span>
-                  <span>Assistente IA para resumos clínicos</span>
+                  <span>Lyra para resumos clínicos</span>
                 </li>
               </ul>
               <Button className="w-full mt-6" size="lg">

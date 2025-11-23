@@ -1,26 +1,47 @@
 // src/pacients/layout/PacientLayout.tsx
+import { ReactNode } from "react";
+import Sidebar from "./Sidebar";
+import PacientHeader from "./Header";
+
+export type PacientViewId =
+  | "home"
+  | "aiVoice"
+  | "schedule"
+  | "medicalRecord"
+  | "settings";
+
+interface PacientLayoutProps {
+  title: string;
+  activeView: PacientViewId;
+  onNavigate: (view: PacientViewId) => void;
+  children: ReactNode;
+}
+
 const PacientLayout = ({
   title,
-  children,
-  onNavigate,
   activeView,
+  onNavigate,
+  children,
 }: PacientLayoutProps) => {
   return (
-    <div className="min-h-screen bg-background flex">
-      <PacientSidebar onNavigate={onNavigate} activeView={activeView} />
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* HEADER NO TOPO DA PÁGINA TODA */}
+      <PacientHeader
+        title={title}
+        activeView={activeView}
+        onNavigate={onNavigate}
+      />
 
-      {/* ml-16 = mesma largura da sidebar, sem espaço extra */}
-      <main className="ml-16 flex-1 flex flex-col">
-        {/* px-6 -> px-4 pra aproximar do lado esquerdo */}
-        <header className="h-16 border-b border-border flex items-center px-4">
-          <h1 className="text-xl font-semibold">{title}</h1>
-        </header>
+      {/* CONTEÚDO: SIDEBAR + MAIN, IGUAL PROFESSIONAL */}
+      <div className="flex flex-1">
+        <Sidebar activeView={activeView} onNavigate={onNavigate} />
 
-        {/* p-6 -> px-4 py-6: menos padding horizontal, igual vertical */}
-        <section className="flex-1 px-4 py-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-8 overflow-auto">
           {children}
-        </section>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
+
+export default PacientLayout;

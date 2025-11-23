@@ -138,7 +138,7 @@ export const Dashboard = ({ onNavigate }: DashboardProps) => {
                 onClick={() => onNavigate('assistenteIA')}
               >
                 <TrendingUp className="mr-2 h-4 w-4" />
-                Abrir Assistente IA
+                Abrir Lyra
               </Button>
             </CardContent>
           </Card>

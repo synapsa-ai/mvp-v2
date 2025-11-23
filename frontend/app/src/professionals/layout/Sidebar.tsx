@@ -25,7 +25,7 @@ const menuItems = [
   { id: 'formularios', label: 'Formulários', icon: ClipboardList },
   { id: 'relatorios', label: 'Relatórios', icon: FileText },
   { id: 'financeiro', label: 'Financeiro', icon: DollarSign },
-  { id: 'assistenteIA', label: 'Assistente IA', icon: Bot },
+  { id: 'assistenteIA', label: 'Lyra', icon: Bot },
   { id: 'configuracoes', label: 'Configurações', icon: Settings },
 ];
 

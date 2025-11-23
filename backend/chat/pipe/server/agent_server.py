@@ -146,9 +146,7 @@ async def chat_route(agent: str, req: Request):
 # ===========================================================================
 #  /assistants/{agent}/invoke   (compatível com seu FRONTEND)
 # ===========================================================================
-# ===========================================================================
-#  /assistants/{agent}/invoke   (compatível com FRONTEND)
-# ===========================================================================
+
 @app.post("/assistants/{agent}/invoke")
 async def assistants_invoke(agent: str, req: Request):
     return await chat_route(agent, req)

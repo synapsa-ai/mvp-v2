@@ -1,56 +1,42 @@
 // app/src/App.tsx
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Suspense, lazy } from "react";
 
-// raiz
-import Splash from "./pages/Splash";
+// primeira tela
 import RoleSelect from "./pages/RoleSelect";
 import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout";
 
-// pacientes
-import PacientApp from "./pacients/PacientApp";
-import AIVoice from "./pacients/pages/AIVoice";
-import Schedule from "./pacients/pages/Schedule";
-import MedicalRecord from "./pacients/pages/MedicalRecord";
-
-import Settings from "./pacients/pages/Settings";
-
-// profissionais
-import ProfessionalApp from "./professionals/ProfessionalApp";
-
-const queryClient = new QueryClient();
+// carregamento tardio dos "sub-apps"
+const PacientApp = lazy(() => import("./pacients/PacientApp"));
+const ProfessionalApp = lazy(() => import("./professionals/ProfessionalApp"));
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* públicas / base */}
-          <Route path="/" element={<Splash />} />
-          <Route path="/role-select" element={<RoleSelect />} />
+  <BrowserRouter>
+    {/* Suspense mostra algo enquanto carrega o módulo da rota */}
+    <Suspense
+      fallback={
+        <div className="w-full h-screen flex items-center justify-center">
+          <span>Carregando...</span>
+        </div>
+      }
+    >
+      <Routes>
+        {/* PRIMEIRA TELA: seleção de papel */}
+        <Route path="/" element={<RoleSelect />} />
+        <Route path="/role-select" element={<RoleSelect />} />
 
-          {/* fluxo paciente com Layout padrão */}
-          <Route element={<Layout />}>
-          {/* Área do paciente controlada pelo PacientApp */}
-          <Route path="/pacients" element={<PacientApp />} />
-        </Route>
+        {/* Área do paciente */}
+        <Route path="/pacients/*" element={<PacientApp />} />
 
-          {/* fluxo profissional: CRM Lovable */}
-          <Route path="/professional/*" element={<ProfessionalApp />} />
+        {/* Área do profissional */}
+        <Route path="/professional/*" element={<ProfessionalApp />} />
 
-          {/* fallback */}
-          <Route path="/404" element={<NotFound />} />
-          <Route path="*" element={<Navigate to="/404" />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+        {/* fallback / 404 */}
+        <Route path="/404" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
+  </BrowserRouter>
 );
 
 export default App;
