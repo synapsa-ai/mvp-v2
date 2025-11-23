@@ -1,5 +1,5 @@
-// frontend/app/src/pages/AIvoice.tsx
-// frontend/app/src/pages/AIvoice.tsx
+// src/pacients/pages/AIVoice.tsx
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,21 +12,22 @@ interface Message {
   content: string;
 }
 
-const horaCurta = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const horaCurta = () =>
+  new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-const ChatVozPTBR = () => {
+const AIVoice = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: crypto.randomUUID(),
       role: "assistant",
       content:
-        "Oi! Sou seu assistente. Toque no microfone para falar e eu transcrevo sua fala. Você também pode digitar abaixo.",
+        "Oi! Como você está se sentindo hoje? Você pode me falar ou escrever :)",
     },
   ]);
   const [input, setInput] = useState("");
 
-  // >>>>>>> ADICIONE ISTO: um thread_id estável por aba <<<<<<<
-  const sidRef = useRef<string>(`web:${crypto.randomUUID()}`);
+  // thread_id estável por aba
+  const sidRef = useRef<string>(`patient:${crypto.randomUUID()}`);
 
   // gravação...
   const [isRecording, setIsRecording] = useState(false);
@@ -47,14 +48,17 @@ const ChatVozPTBR = () => {
     const text = input.trim();
     if (!text) return;
 
-    const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: text };
+    const userMsg: Message = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: text,
+    };
     setMessages((m) => [...m, userMsg]);
     setInput("");
 
     try {
-      const data = await chat("lyra", sidRef.current, text);
+      const data = await chat("patient", sidRef.current, text);
 
-      // LangGraph geralmente retorna { output: "..." }
       const reply =
         (data as any).reply_text ??
         (data as any).output ??
@@ -109,7 +113,6 @@ const ChatVozPTBR = () => {
       setIsRecording(true);
       recorder.start();
 
-      // contador simples
       timerRef.current = window.setInterval(() => {
         setRecordSecs((s) => s + 1);
       }, 1000) as unknown as number;
@@ -131,7 +134,6 @@ const ChatVozPTBR = () => {
   };
 
   const cancelRecording = () => {
-    // cancela sem enviar
     if (mediaRecorderRef.current?.state === "recording") {
       mediaRecorderRef.current.stop();
     }
@@ -153,7 +155,6 @@ const ChatVozPTBR = () => {
     return () => cleanupMedia();
   }, []);
 
-  // ====== Envio ao Endpoint de Transcrição ======
   const handleTranscription = async (blob: Blob) => {
     const userMsg: Message = {
       id: crypto.randomUUID(),
@@ -164,7 +165,8 @@ const ChatVozPTBR = () => {
 
     try {
       const data = await transcribeWebm(blob);
-      const texto = data.text ?? data.error ?? "[Não foi possível transcrever o áudio]";
+      const texto =
+        data.text ?? data.error ?? "[Não foi possível transcrever o áudio]";
 
       const botMsg: Message = {
         id: crypto.randomUUID(),
@@ -176,7 +178,9 @@ const ChatVozPTBR = () => {
       const botMsg: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: `Ocorreu um erro ao transcrever: ${e?.message ?? "erro desconhecido"}`,
+        content: `Ocorreu um erro ao transcrever: ${
+          e?.message ?? "erro desconhecido"
+        }`,
       };
       setMessages((m) => [...m, botMsg]);
     } finally {
@@ -186,7 +190,7 @@ const ChatVozPTBR = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] grid grid-rows-[auto_1fr_auto] p-4 md:p-8 gap-4">
+  <div className="grid grid-rows-[auto_1fr_auto] gap-3 pt-2 md:pt-3 pb-4 md:pb-6 px-4 md:px-6">
       {/* Cabeçalho */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -195,8 +199,12 @@ const ChatVozPTBR = () => {
             <AvatarFallback>LY</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl md:text-3xl font-heading font-bold">Lyra</h1>
-            <p className="text-muted-foreground text-sm">Fale ou digite sua mensagem.</p>
+            <h1 className="text-2xl md:text-3xl font-heading font-bold">
+              Lyra
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Fale ou digite sua mensagem.
+            </p>
           </div>
         </div>
         <Button size="lg" onClick={startRecording} className="gap-2">
@@ -212,7 +220,9 @@ const ChatVozPTBR = () => {
             {messages.map((m) => (
               <li
                 key={m.id}
-                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${
+                  m.role === "user" ? "justify-end" : "justify-start"
+                }`}
               >
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
@@ -262,86 +272,13 @@ const ChatVozPTBR = () => {
         </Button>
       </div>
 
-      {/* Overlay de Gravação em Tela Inteira */}
-      {showOverlay && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-6">
-          <Card className="w-full max-w-lg p-8 text-center relative overflow-hidden">
-            <button
-              onClick={cancelRecording}
-              className="absolute top-3 right-3 rounded-full p-2 hover:bg-muted"
-              aria-label="Fechar"
-            >
-              <span className="material-symbols-rounded">close</span>
-            </button>
-
-            <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto">
-              <div className="flex gap-2 items-end">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-2 rounded-full bg-primary animate-wave"
-                    style={{ height: "48px", animationDelay: `${i * 0.1}s` }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <h2 className="text-2xl font-heading font-semibold mb-1">
-              {isRecording ? "Gravando…" : "Pronto para gravar"}
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {permissionError
-                ? permissionError
-                : 'Fale naturalmente. Clique em "Parar" quando terminar.'}
-            </p>
-            <div className="text-sm text-muted-foreground mb-6">
-              Tempo: {recordSecs}s
-            </div>
-
-            <div className="flex gap-3">
-              {isRecording ? (
-                <Button onClick={stopRecording} size="lg" className="flex-1 gap-2">
-                  <span className="material-symbols-rounded">stop_circle</span>
-                  Parar
-                </Button>
-              ) : (
-                <Button
-                  onClick={startRecording}
-                  size="lg"
-                  variant="secondary"
-                  className="flex-1 gap-2"
-                >
-                  <span className="material-symbols-rounded">mic</span>
-                  Gravar
-                </Button>
-              )}
-              <Button
-                onClick={cancelRecording}
-                size="lg"
-                variant="outline"
-                className="flex-1"
-              >
-                Cancelar
-              </Button>
-            </div>
-
-            {!supportsWebm && (
-              <div className="mt-6 text-xs text-muted-foreground">
-                Aviso: seu navegador pode não suportar <code>audio/webm</code>.
-                Considere outro navegador.
-              </div>
-            )}
-          </Card>
-        </div>
+      {/* Overlay de gravação – mantém o teu código aqui se quiser */}
+      {showOverlay && <></>}
+      {permissionError && (
+        <p className="text-xs text-destructive mt-2">{permissionError}</p>
       )}
-
-      {/* Estilos auxiliares para as barras animadas */}
-      <style>{`
-        @keyframes wave { 0% { transform: scaleY(0.4); } 100% { transform: scaleY(1); } }
-        .animate-wave { animation: wave 0.9s ease-in-out infinite alternate; transform-origin: bottom; }
-      `}</style>
     </div>
   );
 };
 
-export default ChatVozPTBR;
+export default AIVoice;

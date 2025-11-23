@@ -20,3 +20,4 @@ yarn-error.log*
 .idea/
 .vscode/
 frontend/synapsa-mindful-flow/
+backend/chat/pipe/Mental-Health-NLP

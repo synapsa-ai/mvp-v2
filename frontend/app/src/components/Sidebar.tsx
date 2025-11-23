@@ -8,7 +8,7 @@ const navItems = [
   //{ icon: "payments", label: "Finance", path: "/finance" },
   //{ icon: "clinical_notes", label: "Hub", path: "/medical-record" },
   { icon: "chat", label: "Chat", path: "/chat" },
-  { icon: "person", label: "Perfil", path: "/doctor-profile" },
+  //{ icon: "person", label: "Perfil", path: "/doctor-profile" },
   { icon: "settings", label: "Configurações", path: "/settings" },
 ];
 

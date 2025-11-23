@@ -183,7 +183,7 @@ export const Dashboard = ({ onNavigate }: DashboardProps) => {
               <Users className="h-16 w-16 text-muted-foreground/20 mb-4" />
               <h3 className="text-lg font-semibold mb-2">Comece cadastrando pacientes</h3>
               <p className="text-sm text-muted-foreground mb-4 text-center max-w-md">
-                Cadastre seu primeiro paciente para começar a usar o Synapsa CRM
+                Cadastre seu primeiro paciente para começar a usar a Synapsa
               </p>
               <Button onClick={() => onNavigate('pacientes')}>
                 Cadastrar Primeiro Paciente

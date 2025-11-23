@@ -1,3 +1,4 @@
+// app/src/pages/RoleSelect.tsx
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,12 +7,15 @@ const RoleSelect = () => {
   const navigate = useNavigate();
 
   const selectRole = (role: "patient" | "doctor") => {
+    // guarda a escolha no localStorage (se quiser usar depois)
     localStorage.setItem("userRole", role);
 
     if (role === "patient") {
-      navigate("/home");          // fluxo paciente
+      // fluxo paciente -> bate com a rota do App.tsx
+      navigate("/pacients");
     } else {
-      navigate("/professional");  // fluxo profissional (CRM)
+      // fluxo profissional -> CRM
+      navigate("/professional");
     }
   };
 
@@ -26,6 +30,7 @@ const RoleSelect = () => {
         </p>
 
         <div className="grid md:grid-cols-2 gap-6">
+          {/* Card Paciente */}
           <Card
             className="p-8 shadow-elevated hover:scale-105 transition-smooth cursor-pointer"
             onClick={() => selectRole("patient")}
@@ -38,7 +43,7 @@ const RoleSelect = () => {
                 Paciente
               </h2>
               <p className="text-muted-foreground mb-6">
-                Cuide das suas emoções e bem-estar com análise de voz assistida por IA
+                Veja sua evolução emocional ganhar forma.
               </p>
               <Button className="w-full" size="lg">
                 Continue como paciente
@@ -46,6 +51,7 @@ const RoleSelect = () => {
             </div>
           </Card>
 
+          {/* Card Profissional */}
           <Card
             className="p-8 shadow-elevated hover:scale-105 transition-smooth cursor-pointer"
             onClick={() => selectRole("doctor")}
@@ -58,7 +64,7 @@ const RoleSelect = () => {
                 Profissional
               </h2>
               <p className="text-muted-foreground mb-6">
-                Acesse ferramentas clínicas e insights de IA para o cuidado do paciente
+                Atendimento mais eficiente com base em dados.
               </p>
               <Button variant="secondary" className="w-full" size="lg">
                 Continue como profissional

@@ -39,13 +39,19 @@ export const Header = ({ onNavigate, onToggleNotifications }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center gap-4 px-6">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-            <span className="text-white font-bold text-sm">S</span>
-          </div>
-          <span className="font-bold text-lg hidden sm:inline">Synapsa CRM</span>
+
+       {/* Logo */}
+      <div className="flex items-center gap-2">
+        <div className="h-8 w-8 rounded-lg bg-transparent flex items-center justify-center overflow-hidden">
+          <img
+            src="/images/favicon.svg"
+            alt="Synapsa"
+            className="h-8 w-8 object-contain"
+          />
         </div>
+        <span className="font-bold text-lg hidden sm:inline">Synapsa</span>
+      </div>
+
 
         {/* Busca Global */}
         <form onSubmit={handleBusca} className="flex-1 max-w-md">

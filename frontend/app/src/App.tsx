@@ -12,11 +12,11 @@ import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 
 // pacientes
-import Home from "./pacients/pages/Home";
+import PacientApp from "./pacients/PacientApp";
 import AIVoice from "./pacients/pages/AIVoice";
 import Schedule from "./pacients/pages/Schedule";
 import MedicalRecord from "./pacients/pages/MedicalRecord";
-import Chat from "./pacients/pages/Chat";
+
 import Settings from "./pacients/pages/Settings";
 
 // profissionais
@@ -37,13 +37,9 @@ const App = () => (
 
           {/* fluxo paciente com Layout padrão */}
           <Route element={<Layout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/ai-voice" element={<AIVoice />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/medical-record" element={<MedicalRecord />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
+          {/* Área do paciente controlada pelo PacientApp */}
+          <Route path="/pacients" element={<PacientApp />} />
+        </Route>
 
           {/* fluxo profissional: CRM Lovable */}
           <Route path="/professional/*" element={<ProfessionalApp />} />
