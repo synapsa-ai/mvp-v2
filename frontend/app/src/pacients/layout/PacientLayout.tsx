@@ -8,6 +8,7 @@ export type PacientViewId =
   | "aiVoice"
   | "schedule"
   | "medicalRecord"
+  | "finance"
   | "settings";
 
 interface PacientLayoutProps {
