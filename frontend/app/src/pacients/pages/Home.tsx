@@ -1,45 +1,125 @@
 // src/pacients/pages/Home.tsx
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
 import type { ViewId } from "../PacientApp";
+import DiaryHeatmap from "@/components/ui/DiaryHeatmap";
 
-const wellbeingData = [
-  { day: "Seg", score: 65 },
-  { day: "Ter", score: 70 },
-  { day: "Qua", score: 68 },
-  { day: "Qui", score: 72 },
-  { day: "Sex", score: 75 },
-  { day: "Sáb", score: 78 },
-  { day: "Dom", score: 80 },
+// ----------------------
+// MOCK DE ENTRIES DO DIÁRIO
+// Depois basta substituir pelo array vindo do MedicalRecord
+// ----------------------
+
+const diaryEntries = [
+  { day: "Seg", humor: "😊", score: 75, used: 1 },
+  { day: "Ter", humor: "😟", score: 40, used: 1 },
+  { day: "Qua", humor: "😐", score: 55, used: 1 },
+  { day: "Qui", humor: "🤩", score: 85, used: 1 },
+  { day: "Sex", humor: "😴", score: 30, used: 0 },
+  { day: "Sáb", humor: "😊", score: 70, used: 1 },
+  { day: "Dom", humor: "😞", score: 45, used: 1 },
 ];
+
+// ----------------------
+// GERA HEATMAP DE 90 DIAS
+// ----------------------
+
+function gerarHeatmap90Dias(usedDates: string[]) {
+  const today = new Date();
+
+  const entries: { date: string; used: boolean }[] = [];
+
+  for (let i = 89; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(today.getDate() - i);
+
+    const iso = d.toISOString().slice(0, 10);
+    const used = usedDates.includes(iso);
+
+    entries.push({ date: iso, used });
+  }
+
+  return entries;
+}
+
+// transforma o mock de uso semanal em datas reais
+const today = new Date();
+const usedDatesMock = diaryEntries
+  .filter((d) => d.used === 1)
+  .map((_, idx) => {
+    const d = new Date();
+    d.setDate(today.getDate() - idx);
+    return d.toISOString().slice(0, 10);
+  });
+
+const heatmap90 = gerarHeatmap90Dias(usedDatesMock);
+
+// ----------------------
+// CÁLCULOS DE ESTATÍSTICA
+// ----------------------
+
+const totalDiasUsados = heatmap90.filter((d) => d.used).length;
+
+// streak atual
+function calcularStreakAtual() {
+  let streak = 0;
+
+  for (let i = heatmap90.length - 1; i >= 0; i--) {
+    if (heatmap90[i].used) streak++;
+    else break;
+  }
+
+  return streak;
+}
+
+// melhor streak da história
+function calcularMelhorStreak() {
+  let melhor = 0;
+  let atual = 0;
+
+  heatmap90.forEach((d) => {
+    if (d.used) {
+      atual++;
+      if (atual > melhor) melhor = atual;
+    } else {
+      atual = 0;
+    }
+  });
+
+  return melhor;
+}
+
+const streakAtual = calcularStreakAtual();
+const melhorStreak = calcularMelhorStreak();
+
+const weeklyScore =
+  Math.round(
+    diaryEntries.reduce((acc, d) => acc + d.score, 0) / diaryEntries.length
+  ) || 0;
+
+const lastEntry = diaryEntries[diaryEntries.length - 1];
 
 interface HomeProps {
   onNavigate: (view: ViewId) => void;
 }
 
+// =====================================================================
+// D A S H B O A R D   A T U A L I Z A D O
+// =====================================================================
+
 const Home = ({ onNavigate }: HomeProps) => {
   return (
     <div className="flex flex-col gap-8">
-      {/* Header interno da página */}
+      {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-heading font-bold">
             Olá, Felipe 👋
           </h2>
           <p className="text-muted-foreground text-sm md:text-base mt-1">
-            Como você está se sentindo hoje? Aqui você acompanha seus check-ins
-            emocionais e próximos passos.
+            Seu espaço de autocuidado e acompanhamento emocional.
           </p>
         </div>
+
         <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
@@ -47,36 +127,46 @@ const Home = ({ onNavigate }: HomeProps) => {
             onClick={() => onNavigate("schedule")}
           >
             <span className="material-symbols-rounded text-base">event</span>
-            Ver próximos horários
+            Próximos horários
           </Button>
+
           <Button className="gap-2" onClick={() => onNavigate("aiVoice")}>
             <span className="material-symbols-rounded text-base">mic</span>
-            Fazer check-in de voz
+            Check-in de voz
           </Button>
         </div>
       </div>
 
-      {/* Cards principais */}
+      {/* CARDS PRINCIPAIS */}
       <div className="grid md:grid-cols-3 gap-6">
+
+        {/* CARD DO DIÁRIO */}
         <Card
           className="p-6 shadow-card hover:shadow-elevated transition-smooth cursor-pointer"
-          onClick={() => onNavigate("aiVoice")}
+          onClick={() => onNavigate("medicalRecord")}
         >
           <div className="flex items-start justify-between mb-4">
             <span className="material-symbols-rounded text-3xl text-primary">
-              psychology
+              menu_book
             </span>
-            <span className="text-xs text-muted-foreground">2 dias atrás</span>
+            <span className="text-xs text-muted-foreground">
+              Último registro: {lastEntry.day}
+            </span>
           </div>
-          <h3 className="font-heading font-semibold mb-1">
-            Última análise de voz
-          </h3>
+
+          <h3 className="font-heading font-semibold mb-1">Diário emocional</h3>
+
           <p className="text-sm text-muted-foreground mb-3">
-            Nível moderado de estresse detectado.
+            Seu humor mais recente:{" "}
+            <strong className="text-primary">{lastEntry.humor}</strong>.  
+            Você registrou{" "}
+            <strong className="text-primary">{streakAtual}</strong> dia(s) seguidos.
           </p>
-          <p className="text-xs text-primary font-medium">Ver detalhes →</p>
+
+          <p className="text-xs text-primary font-medium">Abrir meu diário →</p>
         </Card>
 
+        {/* CARD CONSULTA */}
         <Card
           className="p-6 shadow-card hover:shadow-elevated transition-smooth cursor-pointer"
           onClick={() => onNavigate("schedule")}
@@ -87,17 +177,18 @@ const Home = ({ onNavigate }: HomeProps) => {
             </span>
             <span className="text-xs text-muted-foreground">Amanhã</span>
           </div>
-          <h3 className="font-heading font-semibold mb-1">
-            Próxima consulta
-          </h3>
+
+          <h3 className="font-heading font-semibold mb-1">Próxima consulta</h3>
           <p className="text-sm text-muted-foreground mb-3">
             Dr. João Silva — 15:00
           </p>
+
           <p className="text-xs text-secondary font-medium">
             Ver agendamentos →
           </p>
         </Card>
 
+        {/* CARD LYRA */}
         <Card className="p-6 shadow-card gradient-primary text-white flex flex-col justify-between">
           <div>
             <span className="material-symbols-rounded text-3xl mb-4 block">
@@ -107,49 +198,63 @@ const Home = ({ onNavigate }: HomeProps) => {
               Cuide de você hoje
             </h3>
             <p className="text-sm text-white/80 mb-4">
-              Reserve 2 minutos para registrar como você está se sentindo.
+              Tire 2 minutos e reflita sobre como você está se sentindo.
             </p>
           </div>
+
           <Button
             variant="secondary"
             size="sm"
             className="self-start"
             onClick={() => onNavigate("aiVoice")}
           >
-            Abrir chat com a Lyra
+            Abrir com a Lyra
           </Button>
         </Card>
       </div>
 
-      {/* Gráfico simples de bem-estar */}
+      {/* SCORE DA SEMANA */}
+      <Card className="p-6 shadow-card">
+        <h3 className="font-heading font-semibold mb-1">
+          Seu score emocional da semana
+        </h3>
+
+        <p className="text-4xl font-bold text-primary">{weeklyScore}</p>
+
+        <p className="text-muted-foreground text-sm mt-1">
+          Baseado em consistência e humor registrado.
+        </p>
+      </Card>
+
+      {/* ESTATÍSTICAS AVANÇADAS */}
+      <Card className="p-6 shadow-card">
+        <h3 className="font-heading font-semibold mb-4">Estatísticas gerais</h3>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 bg-muted rounded-lg text-center">
+            <p className="text-xl font-bold">{totalDiasUsados}</p>
+            <p className="text-xs text-muted-foreground">Dias usados</p>
+          </div>
+
+          <div className="p-4 bg-muted rounded-lg text-center">
+            <p className="text-xl font-bold">{streakAtual}</p>
+            <p className="text-xs text-muted-foreground">Streak atual</p>
+          </div>
+
+          <div className="p-4 bg-muted rounded-lg text-center">
+            <p className="text-xl font-bold">{melhorStreak}</p>
+            <p className="text-xs text-muted-foreground">Melhor streak</p>
+          </div>
+        </div>
+      </Card>
+
+      {/* HEATMAP GITHUB 90 DIAS */}
       <Card className="p-6 shadow-card">
         <h3 className="font-heading font-semibold mb-4">
-          Sua curva de bem-estar nesta semana
+          Seu uso do diário nos últimos 90 dias
         </h3>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={wellbeingData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="hsl(var(--border))"
-            />
-            <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
-            <YAxis stroke="hsl(var(--muted-foreground))" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "hsl(var(--card))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "0.5rem",
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="score"
-              stroke="hsl(var(--primary))"
-              strokeWidth={3}
-              dot={{ r: 4 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+
+        <DiaryHeatmap entries={heatmap90} />
       </Card>
     </div>
   );
