@@ -1,137 +1,357 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, Image as ImageIcon, Mic, Tag as TagIcon } from "lucide-react";
 
-export default function Notes() {
-  // MOCK — depois troca por useApp().notes
-  const [notes, setNotes] = useState([
-    {
-      id: "1",
-      titulo: "Reflexão sobre minha semana",
-      conteudo:
-        "Percebi que fico mais ansioso quando não sigo uma rotina bem definida. Melhorar meu sono pode ajudar.",
-      data: "27/11/2025"
-    },
-    {
-      id: "2",
-      titulo: "Coisas que quero comentar na próxima sessão",
-      conteudo:
-        "• Falar sobre cansaço constante\n• Comentar sobre dificuldade de foco no trabalho\n• Pedir dicas de organização",
-      data: "25/11/2025"
-    }
-  ]);
+type DiaryEntry = {
+  id: string;
+  data: string;
+  humor: string;
+  texto: string;
+  fotos: string[];
+  audio?: string | null; 
+  tags: string[];
+  xp: number;
+};
 
-  const [modal, setModal] = useState<any | null>(null);
+const HUMORES = ["😊", "😞", "😐", "😡", "😴", "😰", "🤩"];
+
+export default function Diary() {
+  const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [novo, setNovo] = useState(false);
-  const [titulo, setTitulo] = useState("");
-  const [conteudo, setConteudo] = useState("");
+  const [visualizar, setVisualizar] = useState<DiaryEntry | null>(null);
 
-  const criarNota = () => {
-    if (!titulo.trim() || !conteudo.trim()) return;
+  const [humor, setHumor] = useState("");
+  const [texto, setTexto] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [fotos, setFotos] = useState<string[]>([]);
+  const [audio, setAudio] = useState<string | null>(null);
 
-    const nova = {
+  const [streak, setStreak] = useState(1);
+
+  // XP calculado por quantidade de conteúdo
+  const calcularXP = () => {
+    let xp = 10;
+    xp += texto.length / 20;
+    xp += tags.length * 5;
+    xp += fotos.length * 8;
+    if (audio) xp += 20;
+    return Math.round(xp);
+  };
+
+  // Upload mock de imagens (base64)
+  const handleFotoUpload = (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFotos([...fotos, reader.result as string]);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Upload mock de áudio (base64)
+  const handleAudioUpload = (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setAudio(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const salvarEntrada = () => {
+    if (!humor || !texto.trim()) return;
+
+    const nova: DiaryEntry = {
       id: Date.now().toString(),
-      titulo,
-      conteudo,
-      data: new Date().toLocaleDateString("pt-BR")
+      data: new Date().toLocaleDateString("pt-BR"),
+      humor,
+      texto,
+      fotos,
+      audio,
+      tags,
+      xp: calcularXP(),
     };
 
-    setNotes([nova, ...notes]);
-    setTitulo("");
-    setConteudo("");
+    setEntries([nova, ...entries]);
+
+    // Reset campos
+    setHumor("");
+    setTexto("");
+    setFotos([]);
+    setAudio(null);
+    setTags([]);
+    setTagInput("");
+
     setNovo(false);
   };
 
   return (
     <div className="p-6 space-y-6">
       {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Anotações</h1>
-          <p className="text-muted-foreground">Um espaço privado só para você</p>
-        </div>
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold">Seu Diário</h1>
+        <p className="text-muted-foreground">
+          Um espaço seguro para você se expressar todos os dias
+        </p>
 
-        <Button onClick={() => setNovo(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nova Anotação
-        </Button>
+        <div className="flex items-center gap-3 mt-2">
+          <div className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+            🔥 Streak: {streak} dia(s)
+          </div>
+          <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+            ⭐ XP Total: {entries.reduce((acc, e) => acc + e.xp, 0)}
+          </div>
+        </div>
       </div>
 
-      {/* LISTA */}
-      <div className="space-y-3">
-        {notes.length === 0 && (
-          <p className="text-muted-foreground">Nenhuma anotação ainda.</p>
+      {/* ENTRADA DO DIA */}
+      <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-100 rounded-xl">
+        <CardContent className="p-5 space-y-4">
+          <h2 className="text-lg font-semibold">Como você está hoje?</h2>
+
+          <div className="flex gap-3 flex-wrap">
+            {HUMORES.map((h) => (
+              <button
+                key={h}
+                onClick={() => {
+                  setHumor(h);
+                  setNovo(true);
+                }}
+                className={`text-3xl hover:scale-110 transition ${
+                  humor === h ? "opacity-100" : "opacity-70"
+                }`}
+              >
+                {h}
+              </button>
+            ))}
+          </div>
+
+          <Button className="mt-2 w-full" onClick={() => setNovo(true)}>
+            Registrar meu dia
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* LISTA DE ENTRADAS */}
+      <div className="space-y-4">
+        {entries.length === 0 && (
+          <p className="text-muted-foreground mt-10 text-center">
+            Nenhum registro ainda. Comece registrando como você está hoje.
+          </p>
         )}
 
-        {notes.map((n) => (
+        {entries.map((entry) => (
           <Card
-            key={n.id}
-            className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => setModal(n)}
+            key={entry.id}
+            className="cursor-pointer hover:shadow-md transition-all rounded-xl"
+            onClick={() => setVisualizar(entry)}
           >
-            <CardContent className="p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg">{n.titulo}</h3>
-                <span className="text-xs text-muted-foreground">{n.data}</span>
+            <CardContent className="p-5 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-2xl">{entry.humor}</span>
+                <span className="text-xs text-muted-foreground">{entry.data}</span>
               </div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {n.conteudo}
+
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {entry.texto}
               </p>
+
+              <div className="flex gap-2 mt-2">
+                {entry.fotos.length > 0 && (
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                    📸 {entry.fotos.length}
+                  </span>
+                )}
+
+                {entry.audio && (
+                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                    🎤 Áudio
+                  </span>
+                )}
+
+                {entry.tags.length > 0 && (
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                    🏷️ {entry.tags.join(", ")}
+                  </span>
+                )}
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* MODAL NOVA NOTA */}
+      {/* MODAL CRIAÇÃO */}
       <Dialog open={novo} onOpenChange={setNovo}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Nova Anotação</DialogTitle>
+            <DialogTitle>Registrar meu dia</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Título</label>
-              <input
-                className="w-full border p-2 rounded-md bg-background mt-1"
-                value={titulo}
-                onChange={(e) => setTitulo(e.target.value)}
-                placeholder="Ex: Ideias para falar na sessão"
-              />
+              <label className="text-sm font-medium">Como você está se sentindo?</label>
+              <div className="flex gap-3 mt-2">
+                {HUMORES.map((h) => (
+                  <button
+                    key={h}
+                    className={`text-3xl transition ${
+                      humor === h ? "opacity-100" : "opacity-60"
+                    }`}
+                    onClick={() => setHumor(h)}
+                  >
+                    {h}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium">Conteúdo</label>
+              <label className="text-sm font-medium">Escreva sobre seu dia</label>
               <Textarea
+                rows={5}
                 className="mt-1"
-                rows={6}
-                value={conteudo}
-                onChange={(e) => setConteudo(e.target.value)}
-                placeholder="Escreva o que quiser..."
+                placeholder="Escreva como se estivesse conversando com você mesmo..."
+                value={texto}
+                onChange={(e) => setTexto(e.target.value)}
               />
             </div>
 
-            <Button className="w-full" onClick={criarNota}>
-              Salvar Anotação
+            {/* TAGS */}
+            <div>
+              <label className="text-sm font-medium flex items-center gap-2">
+                <TagIcon size={16} /> Tags
+              </label>
+
+              <div className="flex gap-2 mt-2">
+                <Input
+                  placeholder="Ansiedade, foco, etc."
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (tagInput.trim()) {
+                      setTags([...tags, tagInput.trim()]);
+                      setTagInput("");
+                    }
+                  }}
+                >
+                  Adicionar
+                </Button>
+              </div>
+
+              <div className="flex gap-2 flex-wrap mt-2">
+                {tags.map((t) => (
+                  <span
+                    key={t}
+                    className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* FOTOS */}
+            <div>
+              <label className="text-sm font-medium flex items-center gap-2">
+                <ImageIcon size={16} /> Fotos
+              </label>
+
+              <Input type="file" accept="image/*" onChange={handleFotoUpload} />
+
+              <div className="flex gap-2 mt-2">
+                {fotos.map((f, i) => (
+                  <img
+                    key={i}
+                    src={f}
+                    className="w-20 h-20 object-cover rounded-md border"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* AUDIO */}
+            <div>
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Mic size={16} /> Áudio
+              </label>
+
+              <Input type="file" accept="audio/*" onChange={handleAudioUpload} />
+
+              {audio && <p className="text-xs mt-1 text-muted-foreground">🎤 Áudio adicionado</p>}
+            </div>
+
+            <Button className="w-full mt-2" onClick={salvarEntrada}>
+              Salvar Registro
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* MODAL VER NOTA */}
-      {modal && (
-        <Dialog open={!!modal} onOpenChange={() => setModal(null)}>
+      {/* MODAL VISUALIZAR */}
+      {visualizar && (
+        <Dialog open={!!visualizar} onOpenChange={() => setVisualizar(null)}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>{modal.titulo}</DialogTitle>
+              <DialogTitle className="text-xl flex items-center gap-2">
+                {visualizar.humor} Registro do dia
+              </DialogTitle>
             </DialogHeader>
 
             <div className="space-y-4">
-              <p className="text-xs text-muted-foreground">{modal.data}</p>
-              <p className="text-sm whitespace-pre-wrap">{modal.conteudo}</p>
+              <p className="text-xs text-muted-foreground">{visualizar.data}</p>
+
+              {/* FOTOS */}
+              {visualizar.fotos.length > 0 && (
+                <div className="flex gap-2 flex-wrap">
+                  {visualizar.fotos.map((f, i) => (
+                    <img
+                      key={i}
+                      src={f}
+                      className="w-24 h-24 object-cover rounded-lg border"
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* AUDIO */}
+              {visualizar.audio && (
+                <audio controls className="w-full">
+                  <source src={visualizar.audio} />
+                </audio>
+              )}
+
+              {/* TEXTO */}
+              <p className="text-sm whitespace-pre-wrap leading-relaxed bg-slate-50 p-4 rounded-lg border">
+                {visualizar.texto}
+              </p>
+
+              {/* TAGS */}
+              {visualizar.tags.length > 0 && (
+                <div className="flex gap-2 flex-wrap">
+                  {visualizar.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* XP */}
+              <p className="text-sm font-medium mt-3 text-purple-700">
+                ⭐ XP ganho neste dia: {visualizar.xp}
+              </p>
             </div>
           </DialogContent>
         </Dialog>
