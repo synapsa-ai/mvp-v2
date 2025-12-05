@@ -1,6 +1,6 @@
 // src/pacients/PacientApp.tsx
 import { useState } from "react";
-import PacientLayout from "./layout/PacientLayout";
+import PacientLayout, { type PacientViewId } from "./layout/PacientLayout";
 
 // páginas internas
 import Home from "./pages/Home";
@@ -8,16 +8,10 @@ import AIVoice from "./pages/AIVoice";
 import Schedule from "./pages/Schedule";
 import MedicalRecord from "./pages/MedicalRecord";
 import Settings from "./pages/Settings";
-
-export type ViewId =
-  | "home"
-  | "aiVoice"
-  | "schedule"
-  | "medicalRecord"
-  | "settings";
+import Finance from "./pages/financeiro"; // confere se o arquivo é mesmo 'financeiro.tsx'
 
 const PacientApp = () => {
-  const [currentView, setCurrentView] = useState<ViewId>("home");
+  const [currentView, setCurrentView] = useState<PacientViewId>("home");
 
   const renderView = () => {
     switch (currentView) {
@@ -29,6 +23,8 @@ const PacientApp = () => {
         return <Schedule />;
       case "medicalRecord":
         return <MedicalRecord />;
+      case "finance":
+        return <Finance />;
       case "settings":
         return <Settings />;
       default:

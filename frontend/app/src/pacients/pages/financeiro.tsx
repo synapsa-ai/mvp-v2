@@ -1,135 +1,58 @@
-import { useParams } from "react-router-dom";
-import { useApp } from "@/professionals/context/AppContext";
+// src/pacients/pages/financeiro.tsx
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
+// import {  } from "@/lib/api";
 
-export const FinanceiroPaciente = () => {
-  const { id } = useParams();
-  const { pacientes, consultas, updateConsultas, valorPadraoConsulta } = useApp();
-
-  const paciente = pacientes.find((p) => p.id === id);
-  if (!paciente) return <p className="p-6">Paciente não encontrado.</p>;
-
-  const consultasPaciente = consultas.filter((c) => c.pacienteId === paciente.id);
-
-  // Marcar pagamento
-  const marcarComoPago = (consultaId: string) => {
-    updateConsultas(
-      consultas.map((c) =>
-        c.id === consultaId ? { ...c, pago: true } : c
-      )
-    );
-    toast({ title: "✓ Pagamento registrado", duration: 1500 });
-  };
-
-  // Gerar link simulado
-  const gerarLinkPagamento = (valor: number) => {
-    const link = `https://pagamento.synapsa.ai/pay?valor=${valor}`;
-    navigator.clipboard.writeText(link);
-    toast({
-      title: "✓ Link de pagamento gerado",
-      description: "O link foi copiado para sua área de transferência.",
-    });
-  };
-
-  // Cálculos
-  const totalPago = consultasPaciente
-    .filter((c) => c.pago)
-    .reduce((acc, c) => acc + (c.valor || valorPadraoConsulta), 0);
-
-  const totalAReceber = consultasPaciente
-    .filter((c) => !c.pago)
-    .reduce((acc, c) => acc + (c.valor || valorPadraoConsulta), 0);
+const FinanceiroPaciente = () => {
+  // No futuro: buscar dados financeiros da API aqui
+  // ex: const { data, isLoading } = useQuery(["financeiro", pacienteId], ...)
 
   return (
     <div className="p-6 space-y-6">
+      {/* Cabeçalho */}
       <div>
-        <h1 className="text-3xl font-bold">Financeiro do Paciente</h1>
+        <h1 className="text-3xl font-bold">Financeiro</h1>
         <p className="text-muted-foreground">
-          Histórico financeiro e cobrança do paciente {paciente.nome}.
+          Aqui você vai acompanhar seus pagamentos, cobranças e recibos.
         </p>
       </div>
 
-      {/* Resumo */}
+      {/* Resumo (placeholder) */}
       <Card>
         <CardHeader>
-          <CardTitle>Resumo financeiro</CardTitle>
+          <CardTitle>Resumo</CardTitle>
         </CardHeader>
         <CardContent className="grid md:grid-cols-3 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">Total pago</p>
-            <p className="text-2xl font-bold text-green-600">
-              R$ {totalPago.toFixed(2)}
-            </p>
+            <p className="text-sm text-muted-foreground">Último pagamento</p>
+            <p className="text-2xl font-bold">—</p>
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">A receber</p>
-            <p className="text-2xl font-bold text-red-600">
-              R$ {totalAReceber.toFixed(2)}
-            </p>
+            <p className="text-sm text-muted-foreground">Próxima cobrança</p>
+            <p className="text-2xl font-bold">—</p>
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">Consultas totais</p>
-            <p className="text-2xl font-bold">
-              {consultasPaciente.length}
-            </p>
+            <p className="text-sm text-muted-foreground">Status da conta</p>
+            <p className="text-2xl font-bold">Em análise</p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Lista de consultas */}
+      {/* Lista de lançamentos (placeholder) */}
       <Card>
         <CardHeader>
-          <CardTitle>Consultas e pagamentos</CardTitle>
+          <CardTitle>Histórico de pagamentos</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {consultasPaciente.length === 0 && (
-            <p className="text-muted-foreground">Nenhuma consulta registrada.</p>
-          )}
-
-          {consultasPaciente.map((c) => (
-            <div
-              key={c.id}
-              className="border rounded-lg p-4 flex items-center justify-between"
-            >
-              <div>
-                <p className="font-medium">
-                  {c.data} — {c.hora}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Valor: R$ {(c.valor || valorPadraoConsulta).toFixed(2)}
-                </p>
-                <Badge className={c.pago ? "bg-green-600" : "bg-red-600"}>
-                  {c.pago ? "Pago" : "A pagar"}
-                </Badge>
-              </div>
-
-              <div className="flex gap-2">
-                {!c.pago && (
-                  <>
-                    <Button
-                      variant="outline"
-                      onClick={() =>
-                        gerarLinkPagamento(c.valor || valorPadraoConsulta)
-                      }
-                    >
-                      Gerar link
-                    </Button>
-
-                    <Button onClick={() => marcarComoPago(c.id)}>
-                      Marcar como pago
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
+        <CardContent className="space-y-2">
+          <p className="text-sm text-muted-foreground">
+            Em breve você poderá ver aqui todos os pagamentos, faturas e
+            recibos vinculados à sua conta.
+          </p>
         </CardContent>
       </Card>
     </div>
   );
 };
+
+export default FinanceiroPaciente;

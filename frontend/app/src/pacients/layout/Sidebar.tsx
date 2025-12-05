@@ -1,9 +1,8 @@
 // src/pacients/layout/Sidebar.tsx
-import { LayoutDashboard, Mic, Calendar, FileText, Settings as SettingsIcon } from "lucide-react";
+import { LayoutDashboard, Banknote, Mic, Calendar, FileText, Settings as SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { PacientViewId } from "./PacientLayout";
-
 interface SidebarProps {
   activeView: PacientViewId;
   onNavigate: (view: PacientViewId) => void;
@@ -14,6 +13,7 @@ const menuItems: { id: PacientViewId; label: string; icon: React.ComponentType<{
   { id: "aiVoice",       label: "Lyra",        icon: Mic },
   { id: "schedule",      label: "Minha Agenda",  icon: Calendar },
   { id: "medicalRecord", label: "Minhas Notas",    icon: FileText },
+  { id: "finance",       label: "Financeiro",    icon: Banknote },
   { id: "settings",      label: "Configurações", icon: SettingsIcon },
 ];
 
