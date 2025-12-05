@@ -1,6 +1,6 @@
 // src/pacients/layout/Header.tsx
 import { useState, FormEvent } from "react";
-import { Search, Calendar, Mic, FileText, Settings, User } from "lucide-react";
+import { Search, Calendar, Mic, FileText, Settings, User, Banknote } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,16 +67,6 @@ const PacientHeader = ({ title, activeView, onNavigate }: PacientHeaderProps) =>
 
         {/* Ações rápidas – específicas do paciente */}
         <div className="flex items-center gap-2">
-          {/* Agenda do paciente */}
-          <Button
-            variant={activeView === "schedule" ? "default" : "ghost"}
-            size="icon"
-            onClick={() => onNavigate("schedule")}
-            title="Minha agenda"
-          >
-            <Calendar className="h-5 w-5" />
-          </Button>
-
           {/* Lyra */}
           <Button
             variant={activeView === "aiVoice" ? "default" : "ghost"}
@@ -85,6 +75,16 @@ const PacientHeader = ({ title, activeView, onNavigate }: PacientHeaderProps) =>
             title="Lyra"
           >
             <Mic className="h-5 w-5" />
+          </Button>
+
+          {/* Agenda do paciente */}
+          <Button
+            variant={activeView === "schedule" ? "default" : "ghost"}
+            size="icon"
+            onClick={() => onNavigate("schedule")}
+            title="Minha agenda"
+          >
+            <Calendar className="h-5 w-5" />
           </Button>
 
           {/* Minhas Notas */}
@@ -105,6 +105,16 @@ const PacientHeader = ({ title, activeView, onNavigate }: PacientHeaderProps) =>
             title="Configurações"
           >
             <Settings className="h-5 w-5" />
+          </Button>
+
+          {/* Financeiro */}
+          <Button
+            variant={activeView === "finance" ? "default" : "ghost"}
+            size="icon"
+            onClick={() => onNavigate("finance")}
+            title="Financeiro"
+          >
+            <Banknote className="h-5 w-5" />
           </Button>
 
           {/* Menu do usuário */}
