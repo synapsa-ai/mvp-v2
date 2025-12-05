@@ -7,16 +7,11 @@ const RoleSelect = () => {
   const navigate = useNavigate();
 
   const selectRole = (role: "patient" | "doctor") => {
-    // guarda a escolha no localStorage (se quiser usar depois)
+    // guarda a escolha no localStorage (pra usar depois no Login)
     localStorage.setItem("userRole", role);
 
-    if (role === "patient") {
-      // fluxo paciente -> bate com a rota do App.tsx
-      navigate("/pacients");
-    } else {
-      // fluxo profissional -> CRM
-      navigate("/professional");
-    }
+    // independente do papel, vai pra tela de login
+    navigate("/login");
   };
 
   return (

@@ -108,3 +108,15 @@ frontend/
  ├─ landing/   ← Public site 
  └─ app/       ← Synapsa Web App (patients + professionals)
 ```
+
+Melhorias:
+
+[] Marcar consultas na aba Minha agenda(relação profissional)
+
+[] Minhas notas:
+- Diário
+
+[] Configurações Paciente
+- Informações do médico
+
+[] Nova página na side

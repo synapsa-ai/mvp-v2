@@ -172,8 +172,8 @@ export const Pacientes = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ativo">Ativo</SelectItem>
-                    <SelectItem value="alta">Alta</SelectItem>
-                    <SelectItem value="risco">Risco</SelectItem>
+                    <SelectItem value="alta">Inativo</SelectItem>
+                    
                   </SelectContent>
                 </Select>
               </div>
